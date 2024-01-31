@@ -1,0 +1,14 @@
+services:
+  external-services:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    hostname: external-services
+    container_name: external-services
+    restart: always
+    ports:
+      - ${PORT}:8000
+    environment:
+      - AMADEUS_API_KEY=${AMADEUS_API_KEY}
+      - AMADEUS_API_SECRET=${AMADEUS_API_SECRET}
+      
