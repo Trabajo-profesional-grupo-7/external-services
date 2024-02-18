@@ -19,6 +19,7 @@ app.add_middleware(
 
 app.include_router(flights_router)
 app.include_router(weather_router)
+app.include_router(currency_router)
 
 
 @app.get("/", include_in_schema=False)
