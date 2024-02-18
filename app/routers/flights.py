@@ -13,8 +13,8 @@ router = APIRouter()
 
 
 @router.get(
-    "/flights",
-    tags=["External services"],
+    "/flights/status",
+    tags=["Flights"],
     status_code=200,
     description="Flights status",
     response_model=Flight,

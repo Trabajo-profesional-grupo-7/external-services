@@ -23,9 +23,9 @@ def get_flight_info(carrier_code: str, flight_number: str, departure_date: str):
 
         if not response.data:
             raise APIException(
-                code=FLIGTH_INFO_NOT_FOUND, msg="FLIGHT INFORMATION NOT FOUND"
+                code=FLIGTH_INFO_NOT_FOUND_ERROR, msg="FLIGHT INFORMATION NOT FOUND"
             )
 
         return parse_flight_info(response.data[0])
     except ResponseError as e:
-        raise APIException(code=FLIGTH_INFO_NOT_FOUND, msg=str(e))
+        raise APIException(code=FLIGTH_INFO_NOT_FOUND_ERROR, msg=str(e))

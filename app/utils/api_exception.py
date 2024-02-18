@@ -19,7 +19,7 @@ class APIExceptionToHTTP:
         self.error_dict = {
             UNKNOWN_ERROR: status.HTTP_500_INTERNAL_SERVER_ERROR,
             EXTERNAL_SERVICE_ERROR: status.HTTP_500_INTERNAL_SERVER_ERROR,
-            FLIGTH_INFO_NOT_FOUND: status.HTTP_404_NOT_FOUND,
+            FLIGTH_INFO_NOT_FOUND_ERROR: status.HTTP_404_NOT_FOUND,
         }
 
     def convert(
