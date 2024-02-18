@@ -11,4 +11,5 @@ services:
     environment:
       - AMADEUS_API_KEY=${AMADEUS_API_KEY}
       - AMADEUS_API_SECRET=${AMADEUS_API_SECRET}
+      - TOMORROW_API_KEY=${TOMORROW_API_KEY}
       
