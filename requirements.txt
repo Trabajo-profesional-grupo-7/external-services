@@ -1,0 +1,7 @@
+uvicorn==0.26.0
+fastapi==0.109.0
+pydantic==2.5.3
+amadeus==9.0.0
+requests==2.26.0
+pytest==8.0.0
+httpx==0.26.0
