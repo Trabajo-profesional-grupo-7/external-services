@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import RedirectResponse
 
+from app.routers.chatbot import router as chatbot_router
 from app.routers.currency import router as currency_router
 from app.routers.flights import router as flights_router
 from app.routers.weather import router as weather_router
@@ -20,6 +21,7 @@ app.add_middleware(
 app.include_router(flights_router)
 app.include_router(weather_router)
 app.include_router(currency_router)
+app.include_router(chatbot_router)
 
 
 @app.get("/", include_in_schema=False)
