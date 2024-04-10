@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 
 from app.ext.tomorrow import *
-from app.schemas.weather import Weather
+from app.schemas.weather import FiveDayWeather
 from app.utils.api_exception import APIException, APIExceptionToHTTP
 from app.utils.constants import *
 
@@ -13,7 +13,7 @@ router = APIRouter()
     tags=["Weather"],
     status_code=200,
     description="Location weather",
-    response_model=Weather,
+    response_model=FiveDayWeather,
 )
 def location_weather(location: str):
     try:
