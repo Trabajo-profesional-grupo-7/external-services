@@ -22,8 +22,6 @@ def location_weather(
     city: str, province: Optional[str] = None, country: Optional[str] = None
 ):
     try:
-        location = get_location(city, province, country)
-        print(location)
-        return get_weather_info(location)
+        return get_weather_info(get_location(city, province, country))
     except APIException as e:
         raise APIExceptionToHTTP().convert(e)
