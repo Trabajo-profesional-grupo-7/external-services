@@ -4,6 +4,10 @@ from app.schemas.weather import DayWeather, FiveDayWeather, Weather
 from app.utils.constants import *
 
 
+def get_location(city: str, province: str, country: str):
+    return " ".join(filter(None, [city, province, country]))
+
+
 def parse_five_day_weather_info(response: dict, location: str):
     weather_data_list = response.get("timelines", {}).get("daily", [])
     five_day_weather_info = []
@@ -17,12 +21,12 @@ def parse_five_day_weather_info(response: dict, location: str):
             continue
         date_time = date.fromisoformat(time[:10])
         weather = Weather(
-            humidity=int(values.get("humidityAvg", 0)),
-            cloudCover=int(values.get("cloudCover", 0)),
-            precipitation_probability=int(values.get("precipitationProbabilityAvg", 0)),
-            temperature=values.get("temperatureAvg", 0),
-            uv_index=values.get("uvIndexAvg", 0),
-            visibility=values.get("visibilityAvg", 0),
+            humidity=int(values.get("humidityAvg")),
+            cloudCover=int(values.get("cloudCoverAvg", 0)),
+            precipitation_probability=int(values.get("precipitationProbabilityAvg")),
+            temperature=values.get("temperatureAvg"),
+            uv_index=int(values.get("uvIndexAvg", 0)),
+            visibility=values.get("visibilityAvg"),
         )
         day_weather = DayWeather(date=date_time, weather=weather)
         five_day_weather_info.append(day_weather)
