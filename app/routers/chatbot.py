@@ -3,7 +3,8 @@ from fastapi import APIRouter, Depends
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
 from app.ext.open_ai import *
-from app.utils.api_exception import APIException, APIExceptionToHTTP
+from app.services.chatbot import get_preferences, get_thread_and_assistant_id
+from app.utils.api_exception import APIException, APIExceptionToHTTP, HTTPException
 from app.utils.constants import *
 
 router = APIRouter()
@@ -17,16 +18,18 @@ AUTHENTICATION_URL = os.getenv("AUTHENTICATION_URL")
     tags=["Chatbot"],
     status_code=201,
     description="Start conversation",
-    response_model=Conversation,
 )
 async def init_conversation(
+    user_id: int,
     credentials: HTTPAuthorizationCredentials = Depends(security),
 ):
-    user_data = requests.get(
-        f"{AUTHENTICATION_URL}/users",
-        headers={"Authorization": f"Bearer {credentials.credentials}"},
-    )
-    return await init_chatbot_conversation(user_data.json()["preferences"])
+    try:
+        user_data = get_preferences(credentials)
+        await init_chatbot_conversation(user_id, user_data.json()["preferences"])
+    except HTTPException as e:
+        raise e
+    except APIException as e:
+        raise APIExceptionToHTTP().convert(e)
 
 
 @router.post(
@@ -36,6 +39,8 @@ async def init_conversation(
     description="Send message to the assistant",
     response_model=AssistantResponse,
 )
-async def send_message(data: SendMessage):
-
-    return await send_user_message(data.thread_id, data.assistant_id, data.message)
+async def send_message(user_id: int, data: SendMessage):
+    chats_ids = get_thread_and_assistant_id(user_id)
+    return await send_user_message(
+        chats_ids.thread_id, chats_ids.assistant_id, data.message
+    )

@@ -8,10 +8,13 @@ class Conversation(BaseModel):
     thread_id: str
 
 
-class SendMessage(BaseModel):
-    message: str
+class ChatIDs(BaseModel):
     thread_id: str
     assistant_id: str
+
+
+class SendMessage(BaseModel):
+    message: str
 
 
 class Thread(BaseModel):

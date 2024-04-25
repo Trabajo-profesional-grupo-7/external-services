@@ -5,13 +5,14 @@ import openai
 from openai import AsyncOpenAI, OpenAI
 
 from app.schemas.chatbot import *
+from app.services.chatbot import send_chat_information
 
 API_KEY = os.getenv("OPENAI_API_KEY")
 
 client = AsyncOpenAI(api_key=API_KEY)
 
 
-async def init_chatbot_conversation(preferences: str):
+async def init_chatbot_conversation(user_id: int, preferences: str):
     assistant = await client.beta.assistants.create(
         name="Isabella",
         instructions=f"You are an assistant in a travel application, where attractions are recommended, plans are made and trips are planned. You must help people with their questions. Occasionally you will have to help a user with these preferences: {preferences}.Your responses must be 100% based on the user's preferences.",
@@ -21,7 +22,7 @@ async def init_chatbot_conversation(preferences: str):
 
     thread = await client.beta.threads.create()
 
-    return Conversation.model_construct(assistant_id=assistant.id, thread_id=thread.id)
+    send_chat_information(user_id, thread.id, assistant.id)
 
 
 async def send_user_message(thread_id: str, assistant_id: str, text: str):
