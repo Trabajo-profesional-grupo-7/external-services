@@ -33,7 +33,7 @@ async def init_conversation(
 
 
 @router.post(
-    "/chatbot/send_message",
+    "/chatbot/send_message/{user_id}",
     tags=["Chatbot"],
     status_code=201,
     description="Send message to the assistant",
