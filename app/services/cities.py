@@ -11,8 +11,8 @@ def parse_cities(cities):
                     name=city["name"],
                     country=city["address"]["countryCode"],
                     state_code=city["address"]["stateCode"],
-                    longitude=city["geoCode"]["latitude"],
-                    latitude=city["geoCode"]["longitude"],
+                    latitude=city["geoCode"]["latitude"],
+                    longitude=city["geoCode"]["longitude"],
                 )
             )
 
