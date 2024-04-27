@@ -10,7 +10,7 @@ router = APIRouter()
 
 
 @router.get(
-    "/Cities",
+    "/cities",
     tags=["Cities"],
     status_code=200,
     description="Get city name",
