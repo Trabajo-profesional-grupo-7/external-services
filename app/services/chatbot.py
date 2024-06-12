@@ -25,10 +25,9 @@ def send_chat_information(user_id: int, thread_id: str, assistant_id: str):
         )
 
 
-def get_preferences(credentials):
+def get_preferences(id):
     return requests.get(
-        f"{AUTHENTICATION_URL}/users",
-        headers={"Authorization": f"Bearer {credentials.credentials}"},
+        f"{AUTHENTICATION_URL}/users/{id}",
     )
 
 

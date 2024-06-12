@@ -21,10 +21,9 @@ AUTHENTICATION_URL = os.getenv("AUTHENTICATION_URL")
 )
 async def init_conversation(
     user_id: int,
-    credentials: HTTPAuthorizationCredentials = Depends(security),
 ):
     try:
-        user_data = get_preferences(credentials)
+        user_data = get_preferences(user_id)
         await init_chatbot_conversation(user_id, user_data.json()["preferences"])
     except HTTPException as e:
         raise e

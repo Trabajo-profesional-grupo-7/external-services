@@ -14,10 +14,10 @@ client = AsyncOpenAI(api_key=API_KEY)
 
 async def init_chatbot_conversation(user_id: int, preferences: str):
     assistant = await client.beta.assistants.create(
-        name="Isabella",
-        instructions=f"You are an assistant in a travel application, where attractions are recommended, plans are made and trips are planned. You must help people with their questions. Occasionally you will have to help a user with these preferences: {preferences}.Your responses must be 100% based on the user's preferences.",
+        name="LucIA",
+        instructions=f"You are an assistant in a travel application, where attractions are recommended, plans are made and trips are planned. You must help people with their questions. Your responses must be 100% based in these {preferences}.",
         tools=[{"type": "code_interpreter"}],
-        model="gpt-3.5-turbo-0125",
+        model="gpt-3.5-turbo-16k",
     )
 
     thread = await client.beta.threads.create()
