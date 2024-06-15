@@ -3,7 +3,11 @@ from fastapi import APIRouter, Depends
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
 from app.ext.open_ai import *
-from app.services.chatbot import get_preferences, get_thread_and_assistant_id
+from app.services.chatbot import (
+    get_location,
+    get_preferences,
+    get_thread_and_assistant_id,
+)
 from app.utils.api_exception import APIException, APIExceptionToHTTP, HTTPException
 from app.utils.constants import *
 
@@ -14,17 +18,16 @@ AUTHENTICATION_URL = os.getenv("AUTHENTICATION_URL")
 
 
 @router.post(
-    "/chatbot/init",
+    "/chatbot/create",
     tags=["Chatbot"],
     status_code=201,
-    description="Start conversation",
+    description="Create assistant and thread from Open AI",
 )
-async def init_conversation(
-    user_id: int,
-):
+async def create_conversation(user_id: int, latitud: str, longitud: str):
     try:
-        user_data = get_preferences(user_id)
-        await init_chatbot_conversation(user_id, user_data.json()["preferences"])
+        preferences = get_preferences(user_id)
+        city = get_location(latitud, longitud)
+        await create_chatbot_conversation(user_id, preferences, city)
     except HTTPException as e:
         raise e
     except APIException as e:

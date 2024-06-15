@@ -2,22 +2,35 @@ import os
 import time
 
 import openai
+import requests
 from openai import AsyncOpenAI, OpenAI
 
 from app.schemas.chatbot import *
-from app.services.chatbot import send_chat_information
+from app.services.chatbot import send_chat_information, set_up_instructions
+from app.utils.api_exception import APIException
+from app.utils.constants import *
 
 API_KEY = os.getenv("OPENAI_API_KEY")
 
 client = AsyncOpenAI(api_key=API_KEY)
 
+URL = "https://api.openai.com/v1"
 
-async def init_chatbot_conversation(user_id: int, preferences: str):
+HEADER = {
+    "Authorization": f"Bearer {API_KEY}",
+    "OpenAI-Beta": "assistants=v2",
+    "Content-Type": "application/json",
+}
+
+
+async def create_chatbot_conversation(user_id: int, preferences: str, city: str):
+
     assistant = await client.beta.assistants.create(
         name="LucIA",
-        instructions=f"You are an assistant in a travel application, where attractions are recommended, plans are made and trips are planned. You must help people with their questions. Your responses must be 100% based in these {preferences}.",
+        description="Sos un asistente en una aplicación de planificación de viajes y visitas a atracciones.",
         tools=[{"type": "code_interpreter"}],
-        model="gpt-3.5-turbo-16k",
+        instructions=set_up_instructions(preferences, city),
+        model="gpt-4-turbo",
     )
 
     thread = await client.beta.threads.create()

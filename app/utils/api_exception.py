@@ -22,6 +22,7 @@ class APIExceptionToHTTP:
             FLIGTH_INFO_NOT_FOUND_ERROR: status.HTTP_404_NOT_FOUND,
             SEND_CHAT_INFORMATION_ERROR: status.HTTP_500_INTERNAL_SERVER_ERROR,
             PLACE_NOT_FOUND_ERROR: status.HTTP_404_NOT_FOUND,
+            ASSISTANT_CREATION_ERROR: status.HTTP_400_BAD_REQUEST,
         }
 
     def convert(

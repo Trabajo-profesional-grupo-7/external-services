@@ -15,7 +15,7 @@ router = APIRouter()
     status_code=200,
     description="Get city name",
 )
-def flight_information(keyword: str):
+def get_city_name(keyword: str):
     try:
         return get_places(keyword)
     except APIException as e:
