@@ -14,7 +14,8 @@ API_KEY = os.getenv("OPENAI_API_KEY")
 
 client = AsyncOpenAI(api_key=API_KEY)
 
-URL = "https://api.openai.com/v1"
+ASSISTANT_URL = "https://api.openai.com/v1"
+THREADS_ULR = "https://api.openai.com/v1"
 
 HEADER = {
     "Authorization": f"Bearer {API_KEY}",
@@ -23,48 +24,106 @@ HEADER = {
 }
 
 
-async def create_chatbot_conversation(user_id: int, preferences: str, city: str):
+def create_chatbot_conversation(user_id: int):
 
-    assistant = await client.beta.assistants.create(
-        name="LucIA",
-        description="Sos un asistente en una aplicación de planificación de viajes y visitas a atracciones.",
-        tools=[{"type": "code_interpreter"}],
-        instructions=set_up_instructions(preferences, city),
-        model="gpt-4-turbo",
+    data = {
+        "name": "LucIA",
+        "description": "Sos un asistente en una aplicación de planificación de viajes y visitas a atracciones.",
+        "tools": [{"type": "code_interpreter"}],
+        "model": "gpt-4-turbo",
+        "temperature": 0.2,
+    }
+
+    assistant_response = requests.post(
+        f"{ASSISTANT_URL}/assistants", json=data, headers=HEADER
     )
 
-    thread = await client.beta.threads.create()
+    thread_response = requests.post(f"{THREADS_ULR}/threads", headers=HEADER)
 
-    send_chat_information(user_id, thread.id, assistant.id)
-
-
-async def send_user_message(thread_id: str, assistant_id: str, text: str):
-    message = await client.beta.threads.messages.create(
-        thread_id=thread_id, role="user", content=text
-    )
-
-    return await get_answer(thread_id, assistant_id)
-
-
-async def get_answer(thread_id: str, assistant_id: str):
-    run = await client.beta.threads.runs.create(
-        thread_id=thread_id, assistant_id=assistant_id
-    )
-    while True:
-        runInfo = await client.beta.threads.runs.retrieve(
-            thread_id=thread_id, run_id=run.id
+    if assistant_response.status_code == 200 and thread_response.status_code == 200:
+        assistant_id = assistant_response.json()["id"]
+        thread_id = thread_response.json()["id"]
+    else:
+        raise APIException(
+            code=OPENAI_ERROR,
+            msg="Create assistant or thread error",
         )
-        if runInfo.completed_at:
+
+    send_chat_information(user_id, thread_id, assistant_id)
+
+
+def init_chatbot_conversation(
+    user_id: int, chats_ids: ChatIDs, preferences: str, city: str
+):
+    instruction = set_up_instructions(preferences, city)
+    data = {"instructions": instruction}
+
+    assistant_config = requests.post(
+        f"{ASSISTANT_URL}/assistants/{chats_ids.assistant_id}",
+        json=data,
+        headers=HEADER,
+    )
+
+    if assistant_config.status_code != 200:
+        raise APIException(code=OPENAI_ERROR, msg="Error assistant configuration")
+    send_chat_information(user_id, chats_ids.thread_id, chats_ids.assistant_id)
+
+
+def send_user_message(chats_ids: ChatIDs, text: str):
+
+    payload = {
+        "role": "user",
+        "content": text,
+    }
+
+    message_in_thread = requests.post(
+        url=f"{THREADS_ULR}/threads/{chats_ids.thread_id}/messages",
+        json=payload,
+        headers=HEADER,
+    )
+
+    payload = {"assistant_id": chats_ids.assistant_id}
+    thread_runs = requests.post(
+        url=f"{THREADS_ULR}/threads/{chats_ids.thread_id}/runs",
+        json=payload,
+        headers=HEADER,
+    )
+
+    if message_in_thread.status_code != 200 or thread_runs.status_code != 200:
+        raise APIException(code=OPENAI_ERROR, msg="Error running thread")
+
+    return get_answer(chats_ids.thread_id, thread_runs.json()["id"])
+
+
+def get_answer(thread_id: str, run_id: str):
+
+    while True:
+        response = requests.get(
+            url=f"{THREADS_ULR}/threads/{thread_id}/runs/{run_id}", headers=HEADER
+        )
+
+        if response.status_code != 200:
+            raise APIException(code=OPENAI_ERROR, msg="Error waiting response")
+
+        if response.json()["completed_at"]:
             break
         time.sleep(1)
 
-    return await read_response(thread_id)
+    return read_response(thread_id)
 
 
-async def read_response(thread_id: str):
-    messages = await client.beta.threads.messages.list(thread_id)
-    last_message = messages.data[0]
+def read_response(thread_id: str):
+
+    assistant_response = requests.get(
+        url=f"{THREADS_ULR}/threads/{thread_id}/messages", headers=HEADER
+    )
+
+    if assistant_response.status_code != 200:
+        raise APIException(code=OPENAI_ERROR, msg="Error in message list from Open AI")
+
+    messages = assistant_response.json()
+    assistant_response = messages["data"][0]["content"][0]["text"]["value"]
 
     return AssistantResponse.model_construct(
-        role=last_message.role, message=last_message.content[0].text.value
+        role="Assistant", message=assistant_response
     )
