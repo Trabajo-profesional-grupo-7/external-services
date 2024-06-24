@@ -25,11 +25,11 @@ def send_chat_information(user_id: int, thread_id: str, assistant_id: str):
         )
 
 
-def get_preferences(id):
+def get_user_data(id):
     response = requests.get(
         f"{AUTHENTICATION_URL}/users/{id}",
     )
-    return response.json()["preferences"]
+    return response.json()["username"], response.json()["preferences"]
 
 
 def get_location(latitud, longitud):
@@ -58,24 +58,29 @@ def get_thread_and_assistant_id(user_id: int):
     )
 
 
-def set_up_instructions(preferences, city):
+def set_up_instructions(username: str, preferences: str, city: str):
+
     instruction = f"""
+    
+    You're a tourism expert.
 
-    Actúa como si fueras un experto en turismo.
+    Make sure to:
+    - Call him by his name: {username}
+    - Recommend attractions and dining places in {city}.
+    - Explain why the user should visit those places.
+    - Speak in a friendly, informal manner.
+    - Do not ask for or store sensitive personal information.
+    - Ensure user data is handled with confidentiality and security.
 
-    Asegúrate de:
-    - Recomendar atracciones y lugares de comida en {city}.
-    - Explicar por qué debería el usuario visitar esos lugares.
-    - Hablar de modo amigable, no formal.
+    Make recommendations to the user considering:
+    - They prioritize activities that include only {preferences}.
 
-    Realiza recomendaciones al usuario teniendo en cuenta que:
-    - Tiene prioridad en hacer actividades que incluyan solamente {preferences}.
+    The user has already provided all the necessary information and expects direct answers. Here is the user's specific request:
+    - City: {city}
+    - Preferences: {preferences}
 
-    El usuario ya ha proporcionado toda la información necesaria y espera respuestas directas. Aquí está la solicitud específica del usuario:
-    - Ciudad: {city}
-    - Preferencias: {preferences}
+    Please respond directly to any questions about recommendations without asking for any additional information.
 
-    Por favor, responde directamente a cualquier pregunta sobre recomendaciones, sin pedir más información adicional.
     """
 
     return instruction

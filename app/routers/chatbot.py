@@ -5,8 +5,8 @@ from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from app.ext.open_ai import *
 from app.services.chatbot import (
     get_location,
-    get_preferences,
     get_thread_and_assistant_id,
+    get_user_data,
 )
 from app.utils.api_exception import APIException, APIExceptionToHTTP, HTTPException
 from app.utils.constants import *
@@ -40,10 +40,10 @@ def create_conversation(user_id: int):
 )
 def init_conversation(user_id: int, latitude: str, longitude: str):
     try:
-        preferences = get_preferences(user_id)
+        username, preferences = get_user_data(user_id)
         city = get_location(latitude, longitude)
         chats_ids = get_thread_and_assistant_id(user_id)
-        init_chatbot_conversation(user_id, chats_ids, preferences, city)
+        init_chatbot_conversation(user_id, chats_ids, username, preferences, city)
     except HTTPException as e:
         raise e
     except APIException as e:

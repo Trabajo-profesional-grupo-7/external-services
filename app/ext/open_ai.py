@@ -28,7 +28,7 @@ def create_chatbot_conversation(user_id: int):
 
     data = {
         "name": "LucIA",
-        "description": "Sos un asistente en una aplicación de planificación de viajes y visitas a atracciones.",
+        "description": "You're an assistant in a travel planning and attraction visiting app.",
         "tools": [{"type": "code_interpreter"}],
         "model": "gpt-4-turbo",
         "temperature": 0.2,
@@ -53,9 +53,13 @@ def create_chatbot_conversation(user_id: int):
 
 
 def init_chatbot_conversation(
-    user_id: int, chats_ids: ChatIDs, preferences: str, city: str
+    user_id: int,
+    chats_ids: ChatIDs,
+    username: str,
+    preferences: str,
+    city: str,
 ):
-    instruction = set_up_instructions(preferences, city)
+    instruction = set_up_instructions(username, preferences, city)
     data = {"instructions": instruction}
 
     assistant_config = requests.post(
