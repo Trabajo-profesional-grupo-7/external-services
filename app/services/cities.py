@@ -1,7 +1,7 @@
-from app.schemas.cities import *
+from app.schemas.cities import Cities, City
 
 
-def parse_cities(cities):
+def parse_cities(cities: list):
     all_cities = []
 
     for city in cities:
