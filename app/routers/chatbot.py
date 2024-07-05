@@ -7,6 +7,7 @@ from app.services.chatbot import (
     get_location,
     get_thread_and_assistant_id,
     get_user_data,
+    notify_user,
 )
 from app.utils.api_exception import APIException, APIExceptionToHTTP, HTTPException
 from app.utils.constants import *
@@ -59,4 +60,6 @@ def init_conversation(user_id: int, latitude: str, longitude: str):
 )
 def send_message(user_id: int, data: SendMessage):
     chats_ids = get_thread_and_assistant_id(user_id)
-    return send_user_message(chats_ids, data.message)
+    assistant_response = send_user_message(chats_ids, data.message)
+    notify_user(user_id, assistant_response.message)
+    return assistant_response

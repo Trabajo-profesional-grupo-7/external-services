@@ -8,6 +8,7 @@ from app.utils.constants import SEND_CHAT_INFORMATION_ERROR
 
 AUTHENTICATION_URL = os.getenv("AUTHENTICATION_URL")
 ATTRACTIONS_URL = os.getenv("ATTRACTIONS_URL")
+NOTIFICATIONS_URL = os.getenv("NOTIFICATIONS_URL")
 
 
 def send_chat_information(user_id: int, thread_id: str, assistant_id: str):
@@ -84,3 +85,15 @@ def set_up_instructions(username: str, preferences: str, city: str):
     """
 
     return instruction
+
+
+def notify_user(user_id: int, assistant_response: str):
+    notification_data = {
+        "user_id": user_id,
+        "title": "New message from IAn",
+        "body": f"{assistant_response[:15]}..",
+    }
+
+    return requests.post(
+        url=f"{NOTIFICATIONS_URL}/notifications/notify", json=notification_data
+    )

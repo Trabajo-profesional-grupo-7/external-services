@@ -27,7 +27,7 @@ HEADER = {
 def create_chatbot_conversation(user_id: int):
 
     data = {
-        "name": "LucIA",
+        "name": "IAn",
         "description": "You're an assistant in a travel planning and attraction visiting app.",
         "tools": [{"type": "code_interpreter"}],
         "model": "gpt-4-turbo",
