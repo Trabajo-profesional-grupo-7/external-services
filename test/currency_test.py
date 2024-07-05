@@ -10,8 +10,6 @@ def test_parse_currency_information():
 
     mock_response = {
         "result": "success",
-        "documentation": "https://www.exchangerate-api.com/docs",
-        "terms_of_use": "https://www.exchangerate-api.com/terms",
         "time_last_update_unix": 1719187201,
         "time_last_update_utc": "Mon, 24 Jun 2024 00:00:01 +0000",
         "time_next_update_unix": 1719273601,
