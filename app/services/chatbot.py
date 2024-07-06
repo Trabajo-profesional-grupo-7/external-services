@@ -91,7 +91,7 @@ def notify_user(user_id: int, assistant_response: str):
     notification_data = {
         "user_id": user_id,
         "title": "New message from IAn",
-        "body": f"{assistant_response[:15]}..",
+        "body": assistant_response,
     }
 
     return requests.post(
