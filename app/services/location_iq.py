@@ -10,8 +10,6 @@ def get_user_city(data: dict):
 
     city = ", ".join(filter(None, address_components))
 
-    print(city)
-
     if city:
         return city
     else:

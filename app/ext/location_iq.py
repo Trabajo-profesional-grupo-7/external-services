@@ -10,7 +10,7 @@ from app.utils.constants import *
 
 LOCATION_IQ_API_KEY = os.getenv("LOCATION_IQ_API_KEY")
 
-api_url = "https://us1.locationiq.com/v1/reverse.php"
+API_URL = "https://us1.locationiq.com/v1/reverse.php"
 
 
 def get_gelocation(latitude: float, longitude: float):
@@ -23,7 +23,7 @@ def get_gelocation(latitude: float, longitude: float):
             "format": "json",
         }
 
-        response = requests.get(api_url, params=params)
+        response = requests.get(API_URL, params=params)
 
         if response.status_code != 200:
             raise APIException(code=EXTERNAL_SERVICE_ERROR, msg="")
