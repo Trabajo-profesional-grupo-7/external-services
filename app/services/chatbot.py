@@ -9,6 +9,7 @@ from app.utils.constants import SEND_CHAT_INFORMATION_ERROR
 AUTHENTICATION_URL = os.getenv("AUTHENTICATION_URL")
 ATTRACTIONS_URL = os.getenv("ATTRACTIONS_URL")
 NOTIFICATIONS_URL = os.getenv("NOTIFICATIONS_URL")
+GEOLOCATION_API_KEY = os.getenv("GEOLOCATION_API_KEY")
 
 
 def send_chat_information(user_id: int, thread_id: str, assistant_id: str):
@@ -31,21 +32,6 @@ def get_user_data(id):
         f"{AUTHENTICATION_URL}/users/{id}",
     )
     return response.json()["username"], response.json()["preferences"]
-
-
-def get_location(latitud, longitud):
-    city = None
-
-    response = requests.post(
-        f"{ATTRACTIONS_URL}/attractions/nearby/{latitud}/{longitud}/5000"
-    )
-
-    attraccions = response.json()
-
-    if attraccions:
-        city = attraccions[0]["city"]
-
-    return city
 
 
 def get_thread_and_assistant_id(user_id: int):
