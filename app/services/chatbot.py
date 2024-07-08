@@ -90,7 +90,7 @@ def set_up_instructions(username: str, preferences: str, city: str):
 def notify_user(user_id: int, assistant_response: str):
     notification_data = {
         "user_id": user_id,
-        "title": "New message from IAn",
+        "title": "New message from gIAn",
         "body": assistant_response,
     }
 
