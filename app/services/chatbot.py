@@ -58,6 +58,7 @@ def set_up_instructions(username: str, preferences: str, city: str):
     - Speak in a friendly, informal manner.
     - Do not ask for or store sensitive personal information.
     - Ensure user data is handled with confidentiality and security.
+    - Responds only about tourism, attractions, culture or places.
 
     Make recommendations to the user considering:
     - They prioritize activities that include only {preferences}.
