@@ -30,7 +30,7 @@ def create_chatbot_conversation(user_id: int):
         "name": "gIAn",
         "description": "You're an assistant in a travel planning and attraction visiting app.",
         "tools": [{"type": "code_interpreter"}],
-        "model": "gpt-4-turbo",
+        "model": "gpt-4o",
         "temperature": 0.2,
     }
 
@@ -75,9 +75,11 @@ def init_chatbot_conversation(
 
 def send_user_message(chats_ids: ChatIDs, text: str):
 
+    contextual_text = f"[Context: You are a travel assistant who only answers questions about tourism and travel. If a question is not related to tourism, respond with 'I'm sorry, I can only answer questions related to tourism and travel.] {text}"
+
     payload = {
         "role": "user",
-        "content": text,
+        "content": contextual_text,
     }
 
     message_in_thread = requests.post(

@@ -55,7 +55,12 @@ def init_conversation(user_id: int, latitude: str, longitude: str):
     response_model=AssistantResponse,
 )
 def send_message(user_id: int, data: SendMessage):
-    chats_ids = get_thread_and_assistant_id(user_id)
-    assistant_response = send_user_message(chats_ids, data.message)
-    notify_user(user_id, assistant_response.message)
-    return assistant_response
+    try:
+        chats_ids = get_thread_and_assistant_id(user_id)
+        assistant_response = send_user_message(chats_ids, data.message)
+        notify_user(user_id, assistant_response.message)
+        return assistant_response
+    except HTTPException as e:
+        raise e
+    except APIException as e:
+        raise APIExceptionToHTTP().convert(e)
