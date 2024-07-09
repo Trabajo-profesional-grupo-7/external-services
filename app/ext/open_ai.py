@@ -75,7 +75,7 @@ def init_chatbot_conversation(
 
 def send_user_message(chats_ids: ChatIDs, text: str):
 
-    contextual_text = f"[Context: You are a travel assistant who only answers questions about tourism and travel. If a question is not related to tourism, respond with 'I'm sorry, I can only answer questions related to tourism and travel.] {text}"
+    contextual_text = f"[Context: You are a travel assistant who only answers questions about tourism, places around the world, attractions, travel and all guide for the traveler. If a question is not related to tourism, respond with 'I'm sorry, I can only answer questions related to tourism and travel.] {text}"
 
     payload = {
         "role": "user",
