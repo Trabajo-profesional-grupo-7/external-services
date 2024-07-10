@@ -7,8 +7,10 @@ import pytest
 from requests.exceptions import RequestException
 
 import app
+from app.ext.location_iq import *
 from app.schemas.chatbot import *
 from app.services.chatbot import set_up_instructions
+from app.services.location_iq import *
 from app.utils.api_exception import *
 from app.utils.constants import *
 
@@ -18,7 +20,7 @@ AUTHENTICATION_URL = os.getenv("AUTHENTICATION_URL")
 def test_set_up_instructions():
     expected_output = """
     
-    You're a tourism expert.
+   You're a tourism expert.
 
     Make sure to:
     - Call him by his name: Lucia
@@ -27,6 +29,7 @@ def test_set_up_instructions():
     - Speak in a friendly, informal manner.
     - Do not ask for or store sensitive personal information.
     - Ensure user data is handled with confidentiality and security.
+    - Responds only about tourism, attractions, culture or places.
 
     Make recommendations to the user considering:
     - They prioritize activities that include only [museums, parks].
@@ -36,6 +39,7 @@ def test_set_up_instructions():
     - Preferences: [museums, parks]
 
     Please respond directly to any questions about recommendations without asking for any additional information.
+
 
     """
     result = set_up_instructions("Lucia", "[museums, parks]", "Buenos Aires")
@@ -79,37 +83,18 @@ class TestGetThreadAndAssistantId(unittest.TestCase):
 
 class TestGetLocation(unittest.TestCase):
 
-    @patch("app.services.chatbot.requests.post")
-    def test_get_location_success(self, mock_post):
+    @patch("app.ext.location_iq.requests.get")
+    def test_get_geolocation_success(self, mock_get):
         mock_response = Mock()
-        mock_response.json.return_value = [
-            {"city": "New York", "distance": 2000},
-            {"city": "Los Angeles", "distance": 4000},
-        ]
-        mock_post.return_value = mock_response
+        mock_response.status_code = 200
+        mock_response.json.return_value = {"address": {"city": "Buenos Aires"}}
+        mock_get.return_value = mock_response
 
-        result = app.services.chatbot.get_location(40.7128, -74.0060)
+        latitude = 40.7128
+        longitude = -74.0060
+        city = get_gelocation(latitude, longitude)
 
-        self.assertEqual(result, "New York")
-
-    @patch("app.services.chatbot.requests.post")
-    def test_get_location_no_attractions_found(self, mock_post):
-        mock_response = Mock()
-        mock_response.json.return_value = []
-        mock_post.return_value = mock_response
-
-        result = app.services.chatbot.get_location(34.0522, -118.2437)
-
-        self.assertIsNone(result)
-
-    @patch("app.services.chatbot.requests.post")
-    def test_get_location_empty_response(self, mock_post):
-        mock_response = Mock()
-        mock_response.json.return_value = None
-        mock_post.return_value = mock_response
-
-        result = app.services.chatbot.get_location(51.5074, -0.1278)
-        self.assertIsNone(result)
+        self.assertEqual(city, "Buenos Aires")
 
 
 class TestSendChatInformation(unittest.TestCase):
