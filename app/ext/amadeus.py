@@ -1,8 +1,11 @@
 import os
+from typing import Optional
 
+import requests
 from amadeus import Client, ResponseError
 from fastapi import status
 
+from app.services.cities import parse_cities
 from app.services.flight_services import parse_flight_info
 from app.utils.api_exception import APIException
 from app.utils.constants import *
@@ -29,3 +32,16 @@ def get_flight_info(carrier_code: str, flight_number: str, departure_date: str):
         return parse_flight_info(response.data[0])
     except ResponseError as e:
         raise APIException(code=FLIGTH_INFO_NOT_FOUND_ERROR, msg=str(e))
+
+
+def get_places(keyword: str):
+    try:
+
+        response = amadeus.reference_data.locations.cities.get(keyword=keyword, max=10)
+
+        if not response.data:
+            raise APIException(code=PLACE_NOT_FOUND_ERROR, msg="PLACE NOT FOUND")
+
+        return parse_cities(response.data)
+    except ResponseError as e:
+        raise APIException(code=PLACE_NOT_FOUND_ERROR, msg=str(e))
