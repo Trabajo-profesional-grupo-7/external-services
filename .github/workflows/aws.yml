@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       AWS_DEFAULT_REGION: us-east-2
-      AWS_ECR_REPOSITORY_NAME: notifications
+      AWS_ECR_REPOSITORY_NAME: external-services
       AWS_ECS_SERVICE_NAME: EXTERNAL-SERVICES-SERVICE
       AWS_ECS_CLUSTER_NAME: T3-LARGE-CLUSTER
 
